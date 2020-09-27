@@ -1,0 +1,54 @@
+{
+  "noLoginIncluded": [
+    "Nezadal jsi osobní číslo.",
+    "Fill in the login number."
+  ],
+  "stupidLoginIncluded": [
+    "Studentské číslo... Pokud chceš zvládnout aspoň prvák, zkus začít číst.",
+    "Student number... If you wanna get through first year, try at least reading."
+  ],
+  "wrongLogin": [
+    "Špatný login.",
+    "Wrong login."
+  ],
+  "shuttingDown": "Vypínám bota...",
+  "teacherAcceptance": "Děkujeme Vám za projevený zájem zapojit se do naší Discord komunity. Vaše žádost bude brzy schválena a bude Vám přiřazena role 'Teacher'.",
+  "userActive": [
+    "Tento uživatel již je na serveru zaregistrovaný.",
+    "This user is actually registered on server."
+  ],
+  "userLoginChanged": [
+    "Tvoje studentské číslo bylo změněno z {0} na {1}. Na tvůj školní email ti byl zaslán verifikační kód.",
+    "Your student number has been changed from {0} to {1}. On your school mail we've sent you a message with verification code."
+  ],
+  "teacherAcceptanceAdmin": "Učitel **{1}** žádá o potvrzení.",
+  "noRoleDmMessage": "Prosím ověř si svůj účet, abys dostal přístup do všech místností!\nPlease verify your account to get access to all rooms!",
+  "welcomeHelpAdmin": "Uživatel **{0}** potřebuje pomoc.",
+  "newsText": "**{0}**\n{1}",
+  "studentVerify": [
+    "Na tvůj školní email ti byl zaslán verifikační kód.",
+    "On your school mail we've sent you a message with verification code."
+  ],
+  "teacherVerify": "Na Váš školní email Vám byl zaslán verifikační kód.",
+  "verificationMail": {
+    "title": [
+      "Discord Verifikace",
+      "Discord Verification"
+    ],
+    "text": [
+      "Pro verifikaci použij příkaz <b>!verify {0}</b>.",
+      "For verification use command <b>!verify {0}</b>."
+    ],
+    "button": "!verify {0}"
+  },
+  "wrongVerificationCode": [
+    "Verifikační kód není správný.",
+    "Verification code is wrong."
+  ],
+  "verificationMailSubject": [
+    "Discord verifikace",
+    "Discord verification"
+  ],
+  "verificationDmMessage": "**Verfikační zpráva byla odeslána {0} lidem**",
+  "currentVersion": "**Aktuální verze bota:** {0} ({1})"
+}

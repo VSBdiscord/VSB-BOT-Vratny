@@ -1,0 +1,35 @@
+{
+  "name": "vsbbot",
+  "version": "1.1.4",
+  "lastupdate": "27/9/2020",
+  "description": "VŠB-TUO FEI Discord Community BOT",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KasheK420/VSB-BOT-Vratny.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KasheK420/vsbBOT/issues"
+  },
+  "homepage": "https://github.com/KasheK420/VSB-BOT-Vratny#readme",
+  "dependencies": {
+    "bufferutil": "^4.0.1",
+    "cheerio": "^1.0.0-rc.3",
+    "cron": "^1.8.2",
+    "discord.js": "^12.2.0",
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.4.8",
+    "sqlite3": "^4.2.0",
+    "nodejs": "^0.0.0",
+    "moment": "^2.26.0"
+  },
+  "devDependencies": {
+    "axios": "^0.19.2"
+  }
+}

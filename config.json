@@ -1,0 +1,63 @@
+{
+  "debug": true,
+  "testers": [
+    "141283180341755904"
+  ],
+  "database": {
+    "queries": {
+      "select": {
+        "userById": "SELECT * FROM vsb_disc.users WHERE id = ?",
+        "userByLogin": "SELECT * FROM vsb_disc.users WHERE login = ?",
+        "polls": "SELECT * FROM vsb_disc.polls"
+      },
+      "insert": {
+        "user": "INSERT INTO vsb_disc.users (id, login, activity, type, verification) VALUES (?, ?, ?, ?, ?)",
+        "poll": "INSERT INTO vsb_disc.polls (id, start, end, author, title, options, emojis) VALUES (?, ?, ?, ?, ?, ?, ?)"
+      },
+      "update": {
+        "userActivityById": "UPDATE vsb_disc.users SET activity = ? WHERE id = ?",
+        "userLoginById": "UPDATE vsb_disc.users SET login = ? WHERE id = ?"
+      }
+    }
+  },
+  "prefix": ["!", "sudo "],
+  "logCommands": true,
+  "roles": {
+    "classes": [
+      "689898671365554288",
+      "689898703577940103",
+      "689898753565655105",
+      "690223264802275484",
+      "690223064276926544",
+      "690947461992284211"
+    ],
+    "studentRole": "691417700949295114",
+    "erasmusRole": "690947461992284211",
+    "teacherRole": "689909803119935665",
+    "adminHelpRole": "691501757943250966",
+    "hostRole": "690325052658548756",
+    "otherRoles": [
+      "690324962443395113"
+    ],
+    "absolventRole": "690325135542190091"
+  },
+  "messenger": {
+    "deleteAfter": 10
+  },
+  "channels": {
+    "bot": "691419856632938556",
+    "welcome": "691407527253901312",
+    "welcomeEnglish": "690947265371832380",
+    "teachersAccounts": "690661656958861352",
+    "giveaway": "692503880470102128",
+    "vsbNews": "690959697867571250"
+  },
+  "services": {
+    "ChannelCleanService": {
+      "deleteAfter": 120
+    }
+  },
+  "assets": {
+    "verificationMail": "./assets/verificationMail.html"
+  }
+}
