@@ -21,8 +21,8 @@ class AdminService extends Service {
         this.RegisterCommand("editmessage", this.onEditMessage, data);
         this.RegisterCommand("messagenorole", this.onMessageNoRole, data);
         this.RegisterCommand("version", this.onVersion);
-        this.RegisterCommand("changename", this.onChangeName);
-        this.RegisterCommand("clearchannel", this.onClearChannel);
+        this.RegisterCommand("changename", this.onChangeName, data);
+        this.RegisterCommand("clearchannel", this.onClearChannel, data);
 
         this.RegisterCron("0 0 12 * * *", () => {
             this.sendNoRoleMessage(Main.Messages.noRoleDmMessage);
