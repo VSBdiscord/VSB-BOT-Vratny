@@ -18,6 +18,7 @@ class AdminService extends Service {
         let data = {"requiredRole": Main.Config.roles.adminHelpRole};
         this.RegisterCommand("shutdown", this.onShutdown, data);
         this.RegisterCommand("message", this.onMessage, data);
+        this.RegisterCommand("editmessage", this.onEditMessage, data);
         this.RegisterCommand("messagenorole", this.onMessageNoRole, data);
         this.RegisterCommand("version", this.onVersion);
         this.RegisterCommand("changename", this.onChangeName);
@@ -33,6 +34,14 @@ class AdminService extends Service {
             process.exit();
         });
         return true;
+    }
+
+    onEditMessage(msg, args) {
+        let id = args[0];
+        let string = args.slice(1).join(" ");
+        Messenger.GetMessageById(msg.channel.id, id).then(msg => {
+            msg.edit(string).catch(() => {});
+        });
     }
 
     onMessage(msg, args) {

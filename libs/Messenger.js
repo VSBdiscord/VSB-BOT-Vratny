@@ -56,14 +56,25 @@ exports.GetMemberById = (id) => {
  * Returns message by id.
  * @param {string} channelId
  * @param {string} messageId
- * @return {Message}
+ * @return {Promise}
  */
 exports.GetMessageById = (channelId, messageId) => {
-    return Main.GetCurrentBot()
-               .guild
-               .channels
-               .cache
-               .find(channel => channel.id === channelId)
-               .messages
-               .fetch(messageId, true);
+    let channel = Main.GetCurrentBot().guild.channels.cache.find(channel => channel.id === channelId);
+    if (channel === undefined) {
+        return new Promise(((resolve, reject) => {
+            Main.GetCurrentBot().client.channels.fetch(channelId).then(channel => {
+                channel.messages.fetch(messageId, true).then(msg => {
+                    resolve(msg);
+                }).catch(() => {reject();});
+            }).catch(() => {reject();});
+        }));
+    } else {
+        return Main.GetCurrentBot()
+                   .guild
+                   .channels
+                   .cache
+                   .find(channel => channel.id === channelId)
+                   .messages
+                   .fetch(messageId, true);
+    }
 };
