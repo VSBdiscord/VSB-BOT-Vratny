@@ -5,6 +5,8 @@ const Roles = require("../libs/Roles");
 const Messenger = require("../libs/Messenger");
 const Channels = require("../libs/Channels");
 const Formatter = require("../libs/Formatter");
+const SystemInformation = require("systeminformation");
+const Discord = require("discord.js");
 
 /**
  * @author DM
@@ -23,6 +25,7 @@ class AdminService extends Service {
         this.RegisterCommand("version", this.onVersion);
         this.RegisterCommand("changename", this.onChangeName, data);
         this.RegisterCommand("clearchannel", this.onClearChannel, data);
+        this.RegisterCommand("hwinfo", this.onHwInfo, data);
 
         this.RegisterCron("0 0 12 * * *", () => {
             this.sendNoRoleMessage(Main.Messages.noRoleDmMessage);
@@ -118,6 +121,42 @@ class AdminService extends Service {
                 });
             }, i * timeBetweenCycles);
         }
+    }
+
+    onHwInfo(msg, args) {
+        let cpuInfo;
+        let memInfo;
+
+        SystemInformation.currentLoad().then(data => {
+            cpuInfo = data;
+            return SystemInformation.mem();
+        }).then(data => {
+            memInfo = data;
+
+            let coresLoadString = "";
+            for (let i = 0; i < cpuInfo.cpus.length; ++i) {
+                coresLoadString += (coresLoadString.length > 0 ? "\n" : "") + " - **CPU" + i + "**: " + (Math.round(cpuInfo.cpus[i].load * 100) / 100).toFixed(2) + "%";
+            }
+
+            let embed = new Discord.MessageEmbed()
+                .setColor("#0099ff")
+                .setTitle("Hardware Info")
+                .addFields(
+                    {
+                        name: "CPU",
+                        value: "**Load**: " + (Math.round(cpuInfo.currentload * 100) / 100).toFixed(2) + "%\n" +
+                            "**Cores**:\n" +
+                            coresLoadString
+                    },
+                    {
+                        name: "Memory",
+                        value: "**Total**: " + (Math.round((memInfo.total / 1024 / 1024) * 100) / 100).toFixed(2) + " MB\n" +
+                            "**Free**: " + (Math.round((memInfo.free / 1024 / 1024) * 100) / 100).toFixed(2) + " MB\n" +
+                            "**Used**: " + (Math.round((memInfo.used / 1024 / 1024) * 100) / 100).toFixed(2) + " MB"
+                    })
+                .setTimestamp();
+            msg.channel.send(embed);
+        });
     }
 
     // OnCommand(msg, command, args) {
