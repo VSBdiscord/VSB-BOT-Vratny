@@ -16,7 +16,8 @@
       },
       "update": {
         "userActivityById": "UPDATE vsb_disc.users SET activity = ? WHERE id = ?",
-        "userLoginById": "UPDATE vsb_disc.users SET login = ? WHERE id = ?"
+        "userLoginById": "UPDATE vsb_disc.users SET login = ? WHERE id = ?",
+        "userScrapRealNameById": "UPDATE vsb_disc.users SET scrap_real_name = ?, scrap_date=CURRENT_TIMESTAMP() WHERE id = ?"
       }
     }
   },

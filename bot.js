@@ -27,8 +27,8 @@ class Bot {
             // Logger.Info("Bot " + this.client.user.username + " is fetching members...");
             this.guild.members.fetch().then(members => {
                 Services.OnStart(this.client);
-                Logger.Info("Bot " + this.client.user.username + " is ready.");
             });
+            Logger.Info("Bot " + this.client.user.username + " is ready.");
         });
 
         this.client.on("message", (msg) => {

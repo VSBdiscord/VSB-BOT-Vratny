@@ -21,6 +21,8 @@ const AdminService = require("./services/AdminService");
 const ChannelCleanService = require("./services/ChannelCleanService");
 const PostingService = require("./services/PostingService");
 const PollService = require("./services/PollService");
+const StudentInfoScraperService = require("./services/StudentInfoScraperService");
+const WebService = require("./services/WebService");
 
 let bots = [];
 let currentBot = null;
@@ -83,6 +85,8 @@ let start = () => {
     Services.AddService(new ChannelCleanService());
     Services.AddService(new PostingService());
     Services.AddService(new PollService());
+    Services.AddService(new StudentInfoScraperService());
+    Services.AddService(new WebService());
     Logger.Info("Ready. Version: " + this.Package.version);
 };
 
