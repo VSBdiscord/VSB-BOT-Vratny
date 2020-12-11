@@ -14,7 +14,8 @@ class Bot {
     constructor(name, token) {
         this.name = name;
         this.token = token;
-        this.client = new Discord.Client();
+        // this.intents = new Discord.Intents(Discord.Intents.ALL);
+        this.client = new Discord.Client({fetchAllMembers: false});
         this.guild = null;
 
         this.client.on("ready", () => {
@@ -25,9 +26,13 @@ class Bot {
                 return;
             }
             // Logger.Info("Bot " + this.client.user.username + " is fetching members...");
-            this.guild.members.fetch().then(members => {
-                Services.OnStart(this.client);
-            });
+            // this.guild.members.fetch().then(members => {
+            //     Logger.Info("fetched members");
+            //     Services.OnStart(this.client);
+            // }).catch(err => {
+            //     Logger.Error("Error while fetching all server members.");
+            // });
+            Services.OnStart(this.client);
             Logger.Info("Bot " + this.client.user.username + " is ready.");
         });
 

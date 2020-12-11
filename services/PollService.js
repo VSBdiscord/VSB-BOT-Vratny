@@ -132,13 +132,13 @@ class PollService extends Service {
         return true;
     }
 
-    OnStart() {
-        super.OnStart();
-        Main.Database.Select(Main.Config.database.queries.select.polls, []).then(data => {
+    async OnStart() {
+        await super.OnStart();
+        Main.Database.Select(Main.Config.database.queries.select.polls, []).then(async data => {
             for (let i = 0; i < data.length; ++i) {
                 let ids = data[i].id.split("-");
                 this.votesHandled.push(new PollVote(ids[1], ids[0], data[i].type, data[i].title, new Date(data[i].start), new Date(data[i].end),
-                    JSON.parse(data[i].options), JSON.parse(data[i].emojis), Messenger.GetMemberById(data[i].author)));
+                    JSON.parse(data[i].options), JSON.parse(data[i].emojis), await Messenger.GetMemberById(data[i].author)));
             }
         });
     }
@@ -154,7 +154,7 @@ class PollService extends Service {
         return null;
     }
 
-    OnReactionAdd(reaction, member) {
+    async OnReactionAdd(reaction, member) {
         let msg = this.getMsg(reaction);
         if (msg === null) return true;
         let date = new Date();
@@ -162,19 +162,19 @@ class PollService extends Service {
         if (msg.type === 0) {
             let reactions = msg.message.reactions.cache.find(react => react.emoji.name !== reaction.emoji.name && react.users.cache.find(user => user.id === member.id));
             if (reactions !== undefined) {
-                reactions.users.remove(member.user);
+                await reactions.users.remove(member.user);
             }
         }
-        msg.message.edit({embed: msg.createEmbed()});
+        await msg.message.edit({embed: msg.createEmbed()});
         return true;
     }
 
-    OnReactionRemove(reaction, member) {
+    async OnReactionRemove(reaction, member) {
         let msg = this.getMsg(reaction);
         if (msg === null) return;
         let date = new Date();
         if (date.getTime() >= msg.end.getTime()) return;
-        msg.message.edit({embed: msg.createEmbed()});
+        await msg.message.edit({embed: msg.createEmbed()});
     }
 }
 

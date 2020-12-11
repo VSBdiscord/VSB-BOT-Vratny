@@ -10,7 +10,7 @@ class StudentCheckService extends Service {
         this.bot = Main.GetBot("porter");
     }
 
-    OnStart() {
+    async OnStart() {
         [...Main.GetCurrentBot().client.members.cache.values()].forEach(member => {
             let isStudent = false;
             let hasStudentRole = false;

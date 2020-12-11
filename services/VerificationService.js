@@ -18,7 +18,7 @@ class VerificationService extends Service {
         super();
         this.bot = Main.GetBot("porter");
         // this.forbiddenRoles = [Main.Config.roles.hostRole, Main.Config.roles.studentRole, ...Main.Config.roles.otherRoles];
-        this.allowedChannels = [Main.Config.channels.welcome, Main.Config.channels.welcomeEnglish];
+        this.allowedChannels = [Main.Config.channels.welcome];
         let data = {"forbiddenRoles": [Main.Config.roles.hostRole, Main.Config.roles.studentRole, ...Main.Config.roles.otherRoles]};
         this.RegisterCommand("student", this.onStudent, data);
         this.RegisterCommand("erasmus", this.onStudent, data);
@@ -138,6 +138,8 @@ class VerificationService extends Service {
             if (rows.length === 0) return;
             if (code === rows[0].verification) {
                 Roles.AddRole(msg.member, rows[0].type === 0 ? Main.Config.roles.studentRole : rows[0].type === 1 ? Main.Config.roles.erasmusRole : Main.Config.roles.teacherRole);
+                if (rows[0].type === 1)
+                    Roles.AddRole(msg.member, Main.Config.roles.studentRole);
                 Main.Database.Run(Main.Config.database.queries.update.userActivityById, [1, msg.member.id]);
             } else {
                 let verificationStringTranslation = rows[0].type;
@@ -208,14 +210,14 @@ class VerificationService extends Service {
         return true;
     }
 
-    OnMessage(msg) {
+    async OnMessage(msg) {
         if ([Main.Config.channels.welcome, Main.Config.channels.welcomeEnglish].indexOf(msg.channel.id) === -1) return;
         if (Main.Config.logCommands) Channels.GetChannel(Main.Config.channels.bot)
                                              .send("**" + Messenger.GetName(msg.member) + "**: " + msg.content);
-        msg.delete();
+        await msg.delete();
     }
 
-    OnServerLeave(member) {
+    async OnServerLeave(member) {
         Main.Database.Select(Main.Config.database.queries.select.userById, [member.id]).then(rows => {
             if (rows.length !== 1) {
                 return;
