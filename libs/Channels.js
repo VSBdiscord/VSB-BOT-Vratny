@@ -22,7 +22,7 @@ exports.GetChannel = (id) => {
  * @param {string} id
  * @return {Promise}
  */
-exports.FetchChannel = (id) => {
+exports.FetchChannel = async (id) => {
     if (fetchesChannels.indexOf(id) !== -1) return new Promise((res, err) => {
         res(exports.GetChannel(id));
     });

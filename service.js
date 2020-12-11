@@ -6,6 +6,7 @@
 
 const Channels = require("./libs/Channels");
 const Cron = require("./cron");
+const Main = require("./main");
 
 class Service {
     constructor() {
@@ -60,14 +61,18 @@ class Service {
         return this.currentCommand;
     }
 
-    OnStart() {
+    Enforce() {
+        Main.SetCurrentBot(this.bot.client);
+    }
+
+    async OnStart() {
         if (this.fetchChannels === null) {
             if (this.allowedChannels !== null) {
                 this.fetchChannels = [...this.allowedChannels];
             } else return;
         }
         for (let i = 0; i < this.fetchChannels.length; ++i) {
-            Channels.FetchChannel(this.fetchChannels[i]);
+            await Channels.FetchChannel(this.fetchChannels[i]);
         }
     }
 
@@ -76,7 +81,7 @@ class Service {
      * @param {Message} msg
      * @constructor
      */
-    OnMessage(msg) {
+    async OnMessage(msg) {
     }
 
     // /**
@@ -95,7 +100,7 @@ class Service {
      * @param {GuildMember} member
      * @constructor
      */
-    OnServerJoin(member) {
+    async OnServerJoin(member) {
     }
 
     /**
@@ -103,7 +108,7 @@ class Service {
      * @param {GuildMember} member
      * @constructor
      */
-    OnServerLeave(member) {
+    async OnServerLeave(member) {
 
     }
 
@@ -113,7 +118,7 @@ class Service {
      * @param {GuildMember} member
      * @constructor
      */
-    OnReactionAdd(reaction, member) {
+    async OnReactionAdd(reaction, member) {
         return true;
     }
 
@@ -123,7 +128,7 @@ class Service {
      * @param {GuildMember} member
      * @constructor
      */
-    OnReactionRemove(reaction, member) {
+    async OnReactionRemove(reaction, member) {
     }
 }
 

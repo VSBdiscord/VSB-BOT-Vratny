@@ -1,6 +1,6 @@
 {
   "name": "vsbbot",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "lastupdate": "30/9/2020",
   "description": "VŠB-TUO FEI Discord Community BOT",
   "main": "main.js",
@@ -22,7 +22,7 @@
     "bufferutil": "^4.0.1",
     "cheerio": "^1.0.0-rc.3",
     "cron": "^1.8.2",
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.5.1",
     "moment": "^2.26.0",
     "mysql": "^2.18.1",
     "nodejs": "^0.0.0",

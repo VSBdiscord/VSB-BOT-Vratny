@@ -115,6 +115,7 @@ dist
 .pnp.*
 
 auth.json
+chkrlog.log
 
 .idea/
 ## TYPO3 v6.2

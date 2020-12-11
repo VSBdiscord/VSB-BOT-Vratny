@@ -48,8 +48,11 @@ exports.GetMembersWithoutRole = () => {
  * @param {string} id
  * @return {?GuildMember}
  */
-exports.GetMemberById = (id) => {
-    return Main.GetCurrentBot().guild.members.cache.find(member => member.id === id);
+exports.GetMemberById = async (id) => {
+    Main.GetCurrentBot().guild.members.fetch(id).then(member => {
+        return member;
+    });
+    // return Main.GetCurrentBot().guild.members.cache.find(member => member.id === id);
 };
 
 /**

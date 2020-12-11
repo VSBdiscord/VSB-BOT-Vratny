@@ -23,6 +23,7 @@ const PostingService = require("./services/PostingService");
 const PollService = require("./services/PollService");
 const StudentInfoScraperService = require("./services/StudentInfoScraperService");
 const WebService = require("./services/WebService");
+const CheckerLogService = require("./services/CheckerLogService");
 
 let bots = [];
 let currentBot = null;
@@ -87,6 +88,7 @@ let start = () => {
     Services.AddService(new PollService());
     Services.AddService(new StudentInfoScraperService());
     Services.AddService(new WebService());
+    Services.AddService(new CheckerLogService());
     Logger.Info("Ready. Version: " + this.Package.version);
 };
 

@@ -84,7 +84,7 @@ class AdminService extends Service {
            .catch(() => {});
     }
 
-    onChangeName(msg, args) {
+    async onChangeName(msg, args) {
         if (args.length === 1) {
             msg.member.setNickname(args[0]).catch(() => {});
         } else if (args.length >= 2) {
@@ -93,7 +93,7 @@ class AdminService extends Service {
             if (msg.mentions.members.size === 1) {
                 member = msg.mentions.members.array()[0];
             } else {
-                member = Messenger.GetMemberById(args[0]);
+                member = await Messenger.GetMemberById(args[0]);
             }
             if (member === undefined)
                 return;
@@ -155,6 +155,7 @@ class AdminService extends Service {
                             "**Used**: " + (Math.round((memInfo.used / 1024 / 1024) * 100) / 100).toFixed(2) + " MB"
                     })
                 .setTimestamp();
+            this.Enforce();
             msg.channel.send(embed);
         });
     }

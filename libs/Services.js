@@ -45,16 +45,16 @@ exports.AddService = (obj) => {
     services.push(obj);
 };
 
-exports.OnStart = (bot) => {
-    Main.SetCurrentBot(bot);
+exports.OnStart = async (bot) => {
     services.forEach(service => {
+        Main.SetCurrentBot(bot);
         // Main.SetCurrentBot(service.bot.client);
         if (!this.IsPermitted(null, service)) return;
         service.OnStart();
     });
 };
 
-exports.OnMessage = (msg) => {
+exports.OnMessage = async (msg) => {
     if (msg.channel.type !== "text" || Main.IsBotId(msg.author.id)) return;
     Main.SetCurrentBot(msg.client);
 
@@ -84,7 +84,7 @@ exports.OnMessage = (msg) => {
         args = args.filter(el => el.length !== 0);
 
         args.splice(0, 1);
-        if (this.OnCommand(msg, all[0].toLowerCase(), args)) {
+        if (await this.OnCommand(msg, all[0].toLowerCase(), args)) {
             msg.delete();
             if (Main.Config.logCommands) Channels.GetChannel(Main.Config.channels.bot)
                                                  .send("**" + Messenger.GetName(msg.member) + "**: " + msg.content);
@@ -96,11 +96,10 @@ exports.OnMessage = (msg) => {
     })
 };
 
-exports.OnCommand = (msg, command, args) => {
-    Main.SetCurrentBot(msg.client);
-
+exports.OnCommand = async (msg, command, args) => {
     let del = false;
     services.forEach(service => {
+        Main.SetCurrentBot(msg.client);
         // if (this.IsPermitted(msg, service)) del |= service.OnCommand(msg, command, args);
         if (this.IsPermitted(msg, service) && Object.keys(service.commands)
                                                     .indexOf(command) !== -1 &&
@@ -124,44 +123,44 @@ exports.OnCommand = (msg, command, args) => {
     return del;
 };
 
-exports.OnServerJoin = (member) => {
-    Main.SetCurrentBot(member.client);
-
+exports.OnServerJoin = async (member) => {
     services.forEach(service => {
+        Main.SetCurrentBot(member.client);
         if (this.IsPermitted(member, service)) {
             service.OnServerJoin(member);
         }
     });
 };
 
-exports.OnServerLeave = (member) => {
-    Main.SetCurrentBot(member.client);
-
+exports.OnServerLeave = async (member) => {
     services.forEach(service => {
+        Main.SetCurrentBot(member.client);
         if (this.IsPermitted(member, service)) {
             service.OnServerLeave(member);
         }
     });
 };
 
-exports.OnReactionAdd = (react, user) => {
+exports.OnReactionAdd = async (react, user) => {
     Main.SetCurrentBot(react.client);
-    let member = Messenger.GetMemberById(user.id);
+    let member = await Messenger.GetMemberById(user.id);
 
     let ok = true;
     services.forEach(service => {
+        Main.SetCurrentBot(react.client);
         if (this.IsPermitted(member, service)) {
             ok &= service.OnReactionAdd(react, member);
         }
     });
-    if (!ok) react.users.remove(user);
+    if (!ok) await react.users.remove(user);
 };
 
-exports.OnReactionRemove = (react, user) => {
+exports.OnReactionRemove = async (react, user) => {
     Main.SetCurrentBot(react.client);
-    let member = Messenger.GetMemberById(user.id);
+    let member = await Messenger.GetMemberById(user.id);
 
     services.forEach(service => {
+        Main.SetCurrentBot(react.client);
         if (this.IsPermitted(member, service)) {
             service.OnReactionRemove(react, member);
         }

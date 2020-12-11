@@ -1,5 +1,5 @@
 {
-  "debug": false,
+  "debug": true,
   "testers": [
     "141283180341755904"
   ],
@@ -21,7 +21,10 @@
       }
     }
   },
-  "prefix": ["!", "sudo "],
+  "prefix": [
+    "!",
+    "sudo "
+  ],
   "logCommands": true,
   "roles": {
     "classes": [
@@ -48,7 +51,6 @@
   "channels": {
     "bot": "691419856632938556",
     "welcome": "691407527253901312",
-    "welcomeEnglish": "690947265371832380",
     "teachersAccounts": "690661656958861352",
     "giveaway": "692503880470102128",
     "vsbNews": "690959697867571250"

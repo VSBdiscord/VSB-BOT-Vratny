@@ -35,11 +35,11 @@ class StudentInfoScraperService extends Service {
         return true;
     }
 
-    onScrapInfo(msg, args) {
+    async onScrapInfo(msg, args) {
         if (!this.checkIfCredentialsSet(msg.channel) || args.length !== 1)
             return;
 
-        let member = Messenger.GetMemberById(args[0]);
+        let member = await Messenger.GetMemberById(args[0]);
         if (member === undefined) {
             msg.channel.send("Unknown member set.");
             return;

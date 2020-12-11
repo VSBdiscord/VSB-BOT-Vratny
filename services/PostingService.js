@@ -23,7 +23,7 @@ class PostingService extends Service {
         this.channel = null;
     }
 
-    OnStart() {
+    async OnStart() {
         Channels.FetchChannel(Main.Config.channels.vsbNews).then(channel => {
             this.channel = channel;
             this.channel.messages.fetch({limit: 1}, true).then(msgs => {
@@ -33,7 +33,6 @@ class PostingService extends Service {
                 this.lastId = parseInt(url.substring(url.indexOf("?reportId=") + "?reportId=".length, url.indexOf("&")));
             });
         });
-
     }
 
     /**
@@ -41,6 +40,8 @@ class PostingService extends Service {
      */
     fetchNews() {
         axios(this.url).then(response => {
+            this.Enforce();
+
             const html = response.data;
             const $ = cheerio.load(html);
 

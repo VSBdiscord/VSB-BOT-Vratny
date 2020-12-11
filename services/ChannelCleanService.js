@@ -18,7 +18,7 @@ class ChannelCleanService extends Service {
         this.listenToBots = true;
     }
 
-    OnMessage(msg) {
+    async OnMessage(msg) {
         setTimeout(() => {
             msg.delete().catch(() => {});
         }, Main.Config.services.ChannelCleanService.deleteAfter * 1000);
