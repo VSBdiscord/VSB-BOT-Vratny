@@ -1,43 +1,43 @@
-#Prefixes
-###sudo
-###!
+# Prefixes
+### sudo
+### !
 
-#Admin service
+# Admin service
 
-###shutdown
+### shutdown
 
-###message
+### message
 
-###editmessage
+### editmessage
 
-###messagenorole
+### messagenorole
 
-###version
+### version
 
-###changename
+### changename
 
-###clearchannel
+### clearchannel
 
-###hwinfo
+### hwinfo
 
-###news
+### news
 
-#Student info Scraper Service
-###scrapinfo
+# Student info Scraper Service
+### scrapinfo
 
 
-#Verification Service
+# Verification Service
 
-###student
+### student
 
-###erasmus
+### erasmus
 
-###teacher
+### teacher
 
-###doctorate
+### doctorate
 
-###help
+### help
 
-###verify
-###host
-###absolvent
+### verify
+### host
+### absolvent
