@@ -47,6 +47,8 @@ exports.GetBot = (name) => {
  */
 exports.SetCurrentBot = (client) => {
     for (let i = 0; i < bots.length; ++i) {
+        if (bots[i].client === undefined)
+            continue;
         if (bots[i].client.user.id === client.user.id) {
             currentBot = bots[i];
             return;
