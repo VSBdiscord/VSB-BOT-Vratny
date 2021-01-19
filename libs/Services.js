@@ -19,9 +19,10 @@ let services = [];
  * @param obj
  * @param {Service} service
  */
+
 exports.IsPermitted = (obj, service) => {
     if (Main.GetCurrentBot().client.user.id !== service.bot.client.user.id ||
-        (obj !== null && obj.client !== undefined && obj.client.user.id !== Main.GetCurrentBot().client.user.id)) return false;
+        (obj !== null && typeof obj === undefined && typeof obj.client === undefined && obj.client.user.id !== Main.GetCurrentBot().client.user.id)) return false;
     if (obj instanceof Message) {
         if ((Main.Config.debug && Main.Config.testers.indexOf(obj.author.id) === -1) || (obj.author.bot && !service.listenToBots) || (service.allowedChannels !== null && service.allowedChannels.indexOf(obj.channel.id) === -1))
             return false;

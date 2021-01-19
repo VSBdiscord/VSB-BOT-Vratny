@@ -24,7 +24,8 @@ const PollService = require("./services/PollService");
 const StudentInfoScraperService = require("./services/StudentInfoScraperService");
 const WebService = require("./services/WebService");
 const CheckerLogService = require("./services/CheckerLogService");
-const PinService = require("./services/PinService");
+//const PinService = require("./services/PinService");
+//const PermissionService = require("./services/PermissionService");
 
 let bots = [];
 let currentBot = null;
@@ -92,7 +93,8 @@ let start = () => {
     Services.AddService(new StudentInfoScraperService());
     Services.AddService(new WebService());
     Services.AddService(new CheckerLogService());
-    Services.AddService(new PinService());
+    //Services.AddService(new PinService());
+    //Services.AddService(new PermissionService());
     Logger.Info("Ready. Version: " + this.Package.version);
 };
 

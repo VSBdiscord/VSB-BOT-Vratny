@@ -10,9 +10,9 @@ class PinService extends Service{
     }
 
 
-    async OnReactionAdd(reaction, member){
-        if (reaction.emoji.name === '📌' && reaction.count >= 8){
+    async OnReactionAdd(reaction, GuildMember){
 
+        if (reaction.emoji.name === '📌' && reaction.count > 7){
             await reaction.message.pin();
         }
         return true;
