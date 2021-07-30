@@ -8,12 +8,12 @@ const Bot = require("./bot");
 const Services = require("./libs/Services");
 const Logger = require("./libs/Logger");
 
-exports.Config = require("./config");
-exports.Messages = require("./messages");
-exports.Auth = require("./auth");
+exports.Config = require("../config.json");
+exports.Messages = require("../messages.json");
+exports.Auth = require("../auth.json");
 exports.Database = require("./libs/Db");
 exports.Mail = require("./libs/Mail");
-exports.Package = require("./package");
+exports.Package = require("../package.json");
 
 const VerificationService = require("./services/VerificationService");
 const StudentCheckService = require("./services/StudentCheckService");
@@ -26,6 +26,7 @@ const WebService = require("./services/WebService");
 const CheckerLogService = require("./services/CheckerLogService");
 //const PinService = require("./services/PinService");
 //const PermissionService = require("./services/PermissionService");
+const DatabaseManagerService = require("./services/DatabaseManagerService");
 
 let bots = [];
 let currentBot = null;
@@ -95,6 +96,7 @@ let start = () => {
     Services.AddService(new CheckerLogService());
     //Services.AddService(new PinService());
     //Services.AddService(new PermissionService());
+    Services.AddService(new DatabaseManagerService());
     Logger.Info("Ready. Version: " + this.Package.version);
 };
 

@@ -119,7 +119,7 @@ class Service {
      * @constructor
      */
     async OnReactionAdd(reaction, member) {
-        return false;
+        return true;
     }
 
     /**
