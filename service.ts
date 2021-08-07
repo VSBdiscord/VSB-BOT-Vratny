@@ -16,7 +16,7 @@ export class Service {
     allowedChannels: string[];
     fetchChannels: string[];
     commands: { [name: string]: { [key: string]: any } };
-    crons;
+    crons: Cron[];
     listenToBots: boolean;
 
     constructor() {
@@ -108,7 +108,7 @@ export class Service {
      * @param reaction
      * @param member
      */
-    public async OnReactionAdd(reaction: MessageReaction, member: GuildMember):Promise<boolean> {
+    public async OnReactionAdd(reaction: MessageReaction, member: GuildMember): Promise<boolean> {
         return true;
     }
 

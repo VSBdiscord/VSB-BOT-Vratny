@@ -19,7 +19,7 @@ class StudentCheckService extends Service {
                 if (role.id === Main.Config.roles.studentRole) hasStudentRole = true;
             });
             if (isStudent && !hasStudentRole) {
-                member.roles.add(Main.Config.roles.studentRole, "Student Check Service");
+                member.roles.add(Main.Config.roles.studentRole, "Student Check ServiceComponent");
             }
         });
     }
