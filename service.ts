@@ -18,15 +18,18 @@ export class Service {
     commands: { [name: string]: { [key: string]: any } };
     crons: Cron[];
     listenToBots: boolean;
+    currentCommand: string;
 
     constructor() {
         this.bot = null;
         this.forbiddenRoles = [];
-        this.allowedChannels = [];
+        this.allowedChannels = null;
         this.fetchChannels = null;
         this.commands = {};
         this.crons = [];
         this.listenToBots = false;
+
+        this.currentCommand = null;
     }
 
     /**
@@ -35,7 +38,7 @@ export class Service {
      * @param callback
      * @param data
      */
-    protected RegisterCommand(cmd: string, callback: (cmd: string, args: string[]) => void, data: { [key: string]: any }): void {
+    protected RegisterCommand(cmd: string, callback: (cmd: Message, args: string[]) => void, data: { [key: string]: any } = {}): void {
         let keys: string[] = [];
         if (data != null)
             keys = Object.keys(data);

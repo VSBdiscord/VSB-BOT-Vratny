@@ -8,19 +8,32 @@
 
 import * as Main from "../main";
 import * as Mailer from "nodemailer";
+import {Auth} from "../main";
 
-let transporter = Mailer.createTransport({
-    service: "gmail",
+// let transporter = Mailer.createTransport({
+//     service: "gmail",
+//     auth: {
+//         user: Main.Auth.mail.user,
+//         pass: Main.Auth.mail.pass
+//     }
+// });
+
+let login: {} = {
+    host: Main.Auth.mail.host,
+    port: Main.Auth.mail.port,
+    secure: Main.Auth.mail.port === 465,
     auth: {
         user: Main.Auth.mail.user,
         pass: Main.Auth.mail.pass
     }
-});
+};
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+let transporter = Mailer.createTransport(login);
 
-export function Send(to:string, subject:string, html:string) {
-    transporter.sendMail({
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+export async function Send(to: string, subject: string, html: string) {
+    await transporter.sendMail({
         from: Main.Auth.mail.user,
         to: to,
         subject: subject,

@@ -8,12 +8,13 @@ import * as Main from "../main";
 import * as Messenger from "./Messenger";
 import * as Channels from "./Channels";
 import * as Roles from "./Roles";
+import * as Logger from "./Logger";
 
 import {Message, GuildMember, Base, ReactionEmoji, User, MessageReaction} from "discord.js";
 import {Service} from "../service";
 import {Bot} from "../bot";
 
-let services:Service[]=[];
+let services: Service[] = [];
 
 /**
  *
@@ -21,8 +22,8 @@ let services:Service[]=[];
  * @param service
  * @constructor
  */
-export function IsPermitted(obj:object, service:Service):boolean {
-    if (Main.GetCurrentBot().client.user.id != service.bot.client.user.id ||
+export function IsPermitted(obj: object, service: Service): boolean {
+    if (service.bot.client === null || Main.GetCurrentBot().client.user.id !== service.bot.client.user.id ||
         (obj != null && obj instanceof Base && typeof obj.client === undefined && obj.client.user.id !== Main.GetCurrentBot().client.user.id))
         return false;
     if (obj instanceof Message) {
@@ -45,20 +46,22 @@ export function IsPermitted(obj:object, service:Service):boolean {
  * @param obj
  * @constructor
  */
-export function AddService(obj:Service) {
+export function AddService(obj: Service) {
+    Logger.Info(`Service ${obj.constructor.name} has been registered with bot ${obj.bot !== null ? obj.bot.name : "null"}.`);
     services.push(obj);
 }
 
-export async function OnStart(bot:Bot) {
+export async function OnStart(bot: Bot) {
     services.forEach(service => {
         Main.SetCurrentBot(bot.client);
         // Main.SetCurrentBot(service.bot.client);
-        if (!this.IsPermitted(null, service)) return;
+        if (!IsPermitted(null, service)) return;
+        Logger.Info("Service " + service.constructor.name + " has been started.");
         service.OnStart();
     });
 }
 
-export async function OnMessage(msg:Message) {
+export async function OnMessage(msg: Message) {
     if (msg.channel.type !== "text" || Main.IsBotId(msg.author.id)) return;
     Main.SetCurrentBot(msg.client);
 
@@ -96,15 +99,15 @@ export async function OnMessage(msg:Message) {
         }
     }
     for (let service of services) {
-        if (this.IsPermitted(msg, service)) await service.OnMessage(msg);
+        if (IsPermitted(msg, service)) await service.OnMessage(msg);
     }
 }
 
-export async function OnCommand(msg:Message, command:string, args:string[]):Promise<boolean> {
-    let del:boolean = false;
+export async function OnCommand(msg: Message, command: string, args: string[]): Promise<boolean> {
+    let del: boolean = false;
     for (let service of services) {
         Main.SetCurrentBot(msg.client);
-        // if (this.IsPermitted(msg, service)) del |= service.OnCommand(msg, command, args);
+        // if (IsPermitted(msg, service)) del |= service.OnCommand(msg, command, args);
         if (IsPermitted(msg, service) && Object.keys(service.commands)
                 .indexOf(command) !== -1 &&
             (service.commands[command]["allowedChannels"] === null || service.commands[command]["allowedChannels"].indexOf(msg.channel) !== -1) &&
@@ -118,6 +121,7 @@ export async function OnCommand(msg:Message, command:string, args:string[]):Prom
             }
             if (!hasForbiddenRole) {
                 // service.currentCommand = command;
+                service.currentCommand = command;
                 service.commands[command]["callback"].call(service, msg, args);
                 del = true;
             }
@@ -127,7 +131,7 @@ export async function OnCommand(msg:Message, command:string, args:string[]):Prom
     return del;
 }
 
-export async function OnServerJoin(member:GuildMember) {
+export async function OnServerJoin(member: GuildMember) {
     for (let service of services) {
         Main.SetCurrentBot(member.client);
         if (IsPermitted(member, service)) {
@@ -136,7 +140,7 @@ export async function OnServerJoin(member:GuildMember) {
     }
 }
 
-export async function OnServerLeave(member:GuildMember) {
+export async function OnServerLeave(member: GuildMember) {
     for (let service of services) {
         Main.SetCurrentBot(member.client);
         if (IsPermitted(member, service)) {
@@ -145,11 +149,11 @@ export async function OnServerLeave(member:GuildMember) {
     }
 }
 
-export async function OnReactionAdd(react:MessageReaction, user:User) {
+export async function OnReactionAdd(react: MessageReaction, user: User) {
     Main.SetCurrentBot(react.client);
-    let member:GuildMember = await Messenger.GetMemberById(user.id);
+    let member: GuildMember = await Messenger.GetMemberById(user.id);
 
-    let ok:boolean = true;
+    let ok: boolean = true;
     for (let service of services) {
         Main.SetCurrentBot(react.client);
         if (IsPermitted(member, service)) {
@@ -159,13 +163,13 @@ export async function OnReactionAdd(react:MessageReaction, user:User) {
     if (!ok) await react.users.remove(user);
 }
 
-export async function OnReactionRemove(react:MessageReaction, user:User) {
+export async function OnReactionRemove(react: MessageReaction, user: User) {
     Main.SetCurrentBot(react.client);
     let member = await Messenger.GetMemberById(user.id);
 
     for (let service of services) {
         Main.SetCurrentBot(react.client);
-        if (this.IsPermitted(member, service)) {
+        if (IsPermitted(member, service)) {
             await service.OnReactionRemove(react, member);
         }
     }

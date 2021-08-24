@@ -24,7 +24,7 @@ export class Bot {
         this.client = new Discord.Client({fetchAllMembers: false});
         this.guild = null;
 
-        this.client.on("ready", () => {
+        this.client.on("ready", async () => {
             this.guild = this.client.guilds.cache.first();
             if (this.guild === undefined) {
                 Logger.Error("Bot " + this.client.user.username + " can't load server.");
@@ -38,7 +38,7 @@ export class Bot {
             // }).catch(err => {
             //     Logger.Error("Error while fetching all server members.");
             // });
-            Services.OnStart(this);
+            await Services.OnStart(this);
             Logger.Info("Bot " + this.client.user.username + " is ready.");
         });
 

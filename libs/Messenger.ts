@@ -63,12 +63,12 @@ export function GetMemberById(id:string):Promise<GuildMember> {
  * @param messageId
  * @constructor
  */
-export function GetMessageById(channelId:string, messageId:string) {
+export function GetMessageById(channelId:string, messageId:string):Promise<Message> {
     let channel:GuildChannel = Main.GetCurrentBot().guild.channels.cache.find((channel:GuildChannel) => channel.id === channelId);
     if (channel == null) {
         return new Promise(((resolve, reject) => {
             Main.GetCurrentBot().client.channels.fetch(channelId).then((channel:TextChannel) => {
-                channel.messages.fetch(messageId, true).then(msg => {
+                channel.messages.fetch(messageId, true).then((msg:Message) => {
                     resolve(msg);
                 }).catch(() => {reject();});
             }).catch(() => {reject();});

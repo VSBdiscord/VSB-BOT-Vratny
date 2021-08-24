@@ -6,29 +6,36 @@
 
 import {Bot} from "./bot";
 
-const Services = require("./libs/Services");
-const Logger = require("./libs/Logger");
+import * as _Config from "./config.json";
+import * as _Messages from "./messages.json";
+import * as _Auth from "./auth.json";
+import * as _Package from "./package.json";
+
+export let Config = _Config;
+export let Messages = _Messages;
+export let Auth = _Auth;
+export let Package = _Package;
+
+import * as Services from "./libs/Services";
+import * as Logger from "./libs/Logger";
 import {Client} from "discord.js";
+import * as _Database from "./libs/DB";
 
-export const Config = require("./config.json");
-export const Messages = require("./messages.json");
-export const Auth = require("./auth.json");
-export const Database = require("./libs/Db");
-export const Mail = require("./libs/Mail");
-export const Package = require("./package.json");
+export let Database = _Database;
 
-const VerificationService = require("./services/VerificationService");
-const StudentCheckService = require("./services/StudentCheckService");
-const AdminService = require("./services/AdminService");
-const ChannelCleanService = require("./services/ChannelCleanService");
-const PostingService = require("./services/PostingService");
-const PollService = require("./services/PollService");
-const StudentInfoScraperService = require("./services/StudentInfoScraperService");
-const WebService = require("./services/WebService");
-const CheckerLogService = require("./services/CheckerLogService");
+import {VerificationService} from "./services/VerificationService";
+import {StudentCheckService} from "./services/StudentCheckService";
+import {AdminService} from "./services/AdminService";
+import {ChannelCleanService} from "./services/ChannelCleanService";
+import {PostingService} from "./services/PostingService";
+import {PollService} from "./services/PollService";
+import {StudentInfoScraperService} from "./services/StudentInfoScraperService";
+import {CheckerLogService} from "./services/CheckerLogService";
+import {DatabaseManagerService} from "./services/DatabaseManagerService";
+
+// const WebService = require("./services/WebService");
 //const PinService = require("./services/PinService");
 //const PermissionService = require("./services/PermissionService");
-const DatabaseManagerService = require("./services/DatabaseManagerService");
 
 let bots: Bot[] = [];
 let currentBot: Bot = null;
@@ -45,10 +52,6 @@ export function GetBot(name: string) {
     return null;
 }
 
-/**
- * Sets current executing bot.
- * @param {Client} client
- */
 export function SetCurrentBot(client: Client) {
     for (let i = 0; i < bots.length; ++i) {
         if (bots[i].client === undefined)
@@ -83,6 +86,7 @@ export function IsBotId(id: string) {
 let start = () => {
     let keys = Object.keys(Auth.bots);
     for (let i = 0; i < keys.length; ++i) {
+        Logger.Info(`Registering bot ${keys[i]}.`);
         let token = Auth.bots[keys[i]];
         bots.push(new Bot(keys[i], token));
     }
@@ -93,8 +97,8 @@ let start = () => {
     Services.AddService(new ChannelCleanService());
     Services.AddService(new PostingService());
     Services.AddService(new PollService());
-    Services.AddService(new StudentInfoScraperService());
-    Services.AddService(new WebService());
+    // Services.AddService(new StudentInfoScraperService());
+    // Services.AddService(new WebService());
     Services.AddService(new CheckerLogService());
     //Services.AddService(new PinService());
     //Services.AddService(new PermissionService());

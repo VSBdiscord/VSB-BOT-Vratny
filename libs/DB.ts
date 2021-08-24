@@ -8,7 +8,7 @@ import * as Main from "../main";
 import * as MySQL from "mysql";
 import * as Logger from "./Logger";
 
-let connection = null;
+let connection:MySQL.Connection = null;
 
 function setupConnection() {
     if (connection === null) connection = MySQL.createConnection({
@@ -16,6 +16,7 @@ function setupConnection() {
         user: Main.Auth.database.user,
         password: Main.Auth.database.pass,
         database: Main.Auth.database.db,
+        port: Main.Auth.database.port,
         timezone: "Europe/Prague",
         charset: "utf8mb4"
     });
@@ -54,7 +55,7 @@ export function Prepare(callback: () => void) {
  * @param params
  * @constructor
  */
-export function Select(query: string, params: string[]): Promise<object> {
+export function Select(query: string, params: string[]): Promise<any> {
     return new Promise((resolve, reject) => {
         let func = () => {
             connection.query(query, params, (error, results, fields) => {
@@ -68,7 +69,7 @@ export function Select(query: string, params: string[]): Promise<object> {
         };
 
         if (!prepared) {
-            this.Prepare(func);
+            Prepare(func);
             return;
         }
         func();
@@ -81,7 +82,7 @@ export function Select(query: string, params: string[]): Promise<object> {
  * @param params
  * @constructor
  */
-export function Run(query: string, params: string[]) {
+export function Run(query: string, params: any[]) {
     let func = () => {
         connection.query(query, params, (error) => {
             if (error) Logger.Error(error.message);
@@ -89,7 +90,7 @@ export function Run(query: string, params: string[]) {
     };
 
     if (!prepared) {
-        this.Prepare(func);
+        Prepare(func);
         return;
     }
     func();
