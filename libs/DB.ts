@@ -81,7 +81,7 @@ export function Select(query: string, params: string[]): Promise<object> {
  * @param params
  * @constructor
  */
-export function Run(query: string, params: string[]) {
+export function Run(query: string, params: any[]) {
     let func = () => {
         connection.query(query, params, (error) => {
             if (error) Logger.Error(error.message);

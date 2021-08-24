@@ -17,18 +17,19 @@ export const Database = require("./libs/Db");
 export const Mail = require("./libs/Mail");
 export const Package = require("./package.json");
 
-const VerificationService = require("./services/VerificationService");
-const StudentCheckService = require("./services/StudentCheckService");
-const AdminService = require("./services/AdminService");
-const ChannelCleanService = require("./services/ChannelCleanService");
-const PostingService = require("./services/PostingService");
-const PollService = require("./services/PollService");
-const StudentInfoScraperService = require("./services/StudentInfoScraperService");
-const WebService = require("./services/WebService");
-const CheckerLogService = require("./services/CheckerLogService");
+import {VerificationService} from "./services/VerificationService";
+import {StudentCheckService} from "./services/StudentCheckService";
+import {AdminService} from "./services/AdminService";
+import {ChannelCleanService} from "./services/ChannelCleanService";
+import {PostingService} from "./services/PostingService";
+import {PollService} from "./services/PollService";
+import {StudentInfoScraperService} from "./services/StudentInfoScraperService";
+import {CheckerLogService} from "./services/CheckerLogService";
+import {DatabaseManagerService} from "./services/DatabaseManagerService";
+
+// const WebService = require("./services/WebService");
 //const PinService = require("./services/PinService");
 //const PermissionService = require("./services/PermissionService");
-const DatabaseManagerService = require("./services/DatabaseManagerService");
 
 let bots: Bot[] = [];
 let currentBot: Bot = null;
@@ -94,7 +95,7 @@ let start = () => {
     Services.AddService(new PostingService());
     Services.AddService(new PollService());
     Services.AddService(new StudentInfoScraperService());
-    Services.AddService(new WebService());
+    // Services.AddService(new WebService());
     Services.AddService(new CheckerLogService());
     //Services.AddService(new PinService());
     //Services.AddService(new PermissionService());
