@@ -5,7 +5,7 @@
   "description": "VŠB-TUO FEI Discord Community BOT",
   "main": "_JS/main.js",
   "scripts": {
-    "build-linux": "tsc.cmd && cp -a assets/. out/assets/",
+    "build-linux": "tsc && cp -a assets/. out/assets/",
     "build-win32": "tsc.cmd && xcopy \"assets\" \"out/assets\" /i /e /r /y /c /k"
   },
   "repository": {
