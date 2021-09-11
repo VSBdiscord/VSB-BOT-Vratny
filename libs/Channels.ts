@@ -23,9 +23,9 @@ export function GetChannel(id: string): TextChannel {
  * @param id
  * @return channel promise
  */
-export async function FetchChannel(id:string):Promise<Channel> {
+export async function FetchChannel(id: string): Promise<Channel> {
     if (fetchedChannels.indexOf(id) != -1) return new Promise((res, err) => {
         res(GetChannel(id));
     });
-    return Main.GetCurrentBot().client.channels.fetch(id, true);
+    return Main.GetCurrentBot().client.channels.fetch(id, {cache: true});
 }

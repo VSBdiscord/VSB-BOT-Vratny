@@ -18,7 +18,7 @@ export class PollService extends Service {
 
         this.bot = Main.GetBot("porter");
         let data = {"requiredRole": Main.Config.roles.adminHelpRole};
-        this.RegisterCommand("vote", this.onVote, data);
+        // this.RegisterLegacyCommand("vote", this.onVote, data);
 
         this.votesHandled = [];
     }
@@ -43,13 +43,12 @@ export class PollService extends Service {
 
     async OnStart() {
         await super.OnStart();
-        Main.Database.Select(Main.Config.database.queries.select.polls, []).then(async data => {
-            for (let i = 0; i < data.length; ++i) {
-                let ids = data[i].id.split("-");
-                this.votesHandled.push(new PollVote(ids[1], ids[0], data[i].type, data[i].title, new Date(data[i].start), new Date(data[i].end),
-                    JSON.parse(data[i].options), JSON.parse(data[i].emojis), await Messenger.GetMemberById(data[i].author)));
-            }
-        });
+        let data: any[] = await Main.Database.Select(Main.Config.database.queries.select.polls, [])
+        for (let i = 0; i < data.length; ++i) {
+            let ids = data[i].id.split("-");
+            this.votesHandled.push(new PollVote(ids[1], ids[0], data[i].type, data[i].title, new Date(data[i].start), new Date(data[i].end),
+                JSON.parse(data[i].options), JSON.parse(data[i].emojis), await Messenger.GetMemberById(data[i].author)));
+        }
     }
 
     /**
@@ -74,7 +73,7 @@ export class PollService extends Service {
                 await reactions.users.remove(member.user);
             }
         }
-        await msg.message.edit({embed: msg.createEmbed()});
+        await msg.message.edit({embeds: [msg.createEmbed()]});
         return true;
     }
 
@@ -83,7 +82,7 @@ export class PollService extends Service {
         if (msg === null) return;
         let date = new Date();
         if (date.getTime() >= msg.end.getTime()) return;
-        await msg.message.edit({embed: msg.createEmbed()});
+        await msg.message.edit({embeds: [msg.createEmbed()]});
     }
 }
 
@@ -108,7 +107,7 @@ export class PollVote {
         this.emojis = emojis;
         this.realEmojis = [];
         for (let i = 0; i < this.emojis.length; ++i) {
-            let emoji:string|GuildEmoji = this.emojis[i];
+            let emoji: string | GuildEmoji = this.emojis[i];
             if (emoji.indexOf("<") !== -1 && emoji.indexOf(">") !== -1) {
                 emoji = emoji.substring(emoji.lastIndexOf(":") + 1, emoji.lastIndexOf(">"));
                 emoji = Main.GetCurrentBot().guild.emojis.cache.find(em => em.id === emoji);
@@ -124,8 +123,8 @@ export class PollVote {
         } else {
             Messenger.GetMessageById(channel, id).then((msg: Message) => {
                 this.message = msg;
-                this.message.reactions.cache.array().forEach(reaction => {
-                    reaction.users.fetch();
+                this.message.reactions.cache.forEach(reaction => {
+                    reaction.users.fetch().finally();
                 });
             });
             this.channel = Channels.GetChannel(channel);
@@ -137,7 +136,7 @@ export class PollVote {
         for (let i = 0; i < this.options.length; ++i) {
             let num = 0;
             if (this.message !== null) {
-                num = this.message.reactions.cache.find(react => (typeof this.realEmojis[i] ==="string" && react.emoji.name === this.realEmojis[i]) || react.emoji.id === (this.realEmojis[i] as GuildEmoji).id).count - 1;
+                num = this.message.reactions.cache.find(react => (typeof this.realEmojis[i] === "string" && react.emoji.name === this.realEmojis[i]) || react.emoji.id === (this.realEmojis[i] as GuildEmoji).id).count - 1;
             }
             text += (text.length > 0 ? "\n" : "") + "**[" + num + "]** " + this.realEmojis[i].toString() + " - " + this.options[i];
         }
@@ -179,13 +178,14 @@ export class PollVote {
         //     .addField("Možnosti", this.createEmbed(), false)
         //     .setTimestamp();
 
-        this.channel.send({embed: this.createEmbed()}).then(msg => {
+        this.channel.send({embeds: [this.createEmbed()]}).then(msg => {
             this.message = msg;
             for (let i = 0; i < this.realEmojis.length; ++i) {
                 this.message.react(this.realEmojis[i]);
             }
             Main.Database.Run(Main.Config.database.queries.insert.poll, [this.message.channel.id + "-" + this.message.id,
                 this.start, this.end, this.author.id, this.title, JSON.stringify(this.options), JSON.stringify(this.emojis)]);
+        }).catch(err => {
         });
     }
 }

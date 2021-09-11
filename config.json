@@ -1,7 +1,10 @@
 {
   "debug": false,
   "testers": [
-    "141283180341755904","721660616531771393"
+    "141283180341755904",
+    "721660616531771393",
+    "220475705400623104",
+    "286560250578862080"
   ],
   "database": {
     "queries": {
@@ -12,16 +15,18 @@
       },
       "insert": {
         "user": "INSERT INTO vsb_disc.users (id, login, activity, type, verification) VALUES (?, ?, ?, ?, ?)",
+        "userFull": "INSERT INTO vsb_disc.users (id, login, activity, type, verification, scrap_real_name, scrap_date) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP())",
         "poll": "INSERT INTO vsb_disc.polls (id, start, end, author, title, options, emojis) VALUES (?, ?, ?, ?, ?, ?, ?)"
       },
       "update": {
         "userActivityById": "UPDATE vsb_disc.users SET activity = ? WHERE id = ?",
         "userLoginById": "UPDATE vsb_disc.users SET login = ? WHERE id = ?",
-        "userScrapRealNameById": "UPDATE vsb_disc.users SET scrap_real_name = ?, scrap_date=CURRENT_TIMESTAMP() WHERE id = ?"
+        "userScrapRealNameById": "UPDATE vsb_disc.users SET scrap_real_name = ?, scrap_date=CURRENT_TIMESTAMP() WHERE id = ?",
+        "userInfoById": "UPDATE vsb_disc.users SET login = ?, activity = ?, scrap_real_name = ?, scrap_date = CURRENT_TIMESTAMP() WHERE id = ?"
       }
     }
   },
-  "prefix": [
+  "legacyPrefix": [
     "!",
     "sudo "
   ],
@@ -44,7 +49,8 @@
     "otherRoles": [
       "690324962443395113"
     ],
-    "absolventRole": "690325135542190091"
+    "absolventRole": "690325135542190091",
+    "adminRole": "689908370018402343"
   },
   "messenger": {
     "deleteAfter": 10

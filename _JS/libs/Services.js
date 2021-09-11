@@ -59,10 +59,10 @@ exports.OnMessage = async (msg) => {
     if (msg.channel.type !== "text" || Main.IsBotId(msg.author.id)) return;
     Main.SetCurrentBot(msg.client);
 
-    if (msg.content.indexOf(Main.Config.prefix[0]) === 0 || msg.content.indexOf(Main.Config.prefix[1]) === 0) { // Command
-        let prefixLen = Main.Config.prefix[0].length;
-        for (let i = 1; i < Main.Config.prefix.length; ++i) {
-            if (msg.content.indexOf(Main.Config.prefix[i]) === 0) prefixLen = Main.Config.prefix[1].length;
+    if (msg.content.indexOf(Main.Config.legacyPrefix[0]) === 0 || msg.content.indexOf(Main.Config.legacyPrefix[1]) === 0) { // Command
+        let prefixLen = Main.Config.legacyPrefix[0].length;
+        for (let i = 1; i < Main.Config.legacyPrefix.length; ++i) {
+            if (msg.content.indexOf(Main.Config.legacyPrefix[i]) === 0) prefixLen = Main.Config.legacyPrefix[1].length;
         }
         let content = msg.content.substring(prefixLen);
         let inString = false;

@@ -14,13 +14,13 @@ export class DatabaseManagerService extends Service {
         this.bot = Main.GetBot("porter");
 
         this.activated = false;
-        this.RegisterCommand(
-            "dbmgr",
-            this.dbmgr,
-            {
-                "requiredRole": Main.Config.roles.developerRole
-            }
-        );
+        // this.RegisterLegacyCommand(
+        //     "dbmgr",
+        //     this.dbmgr,
+        //     {
+        //         "requiredRole": Main.Config.roles.developerRole
+        //     }
+        // );
     }
 
     dbmgr(msg, args) {

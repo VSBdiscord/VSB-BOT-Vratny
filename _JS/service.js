@@ -37,7 +37,7 @@ class Service {
             "allowedChannels": keys.indexOf("allowedChannels") !== -1 ? data["allowedChannels"] : null,
             "forbiddenRoles": keys.indexOf("forbiddenRoles") !== -1 ? data["forbiddenRoles"] : []
         };
-        this.commands[cmd.toLowerCase()] = {
+        this.legacyCommands[cmd.toLowerCase()] = {
             "callback": callback,
             "requiredRole": data["requiredRole"],
             "allowedChannels": data["allowedChannels"],

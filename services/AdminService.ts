@@ -11,33 +11,34 @@ import * as Formatter from "../libs/Formatter";
 import * as Logger from "../libs/Logger";
 import * as SystemInformation from "systeminformation";
 import {Message, MessageEmbed, TextChannel} from "discord.js";
+import {BotLogger} from "../libs/BotLogger";
 
 export class AdminService extends Service {
     constructor() {
         super();
 
         this.bot = Main.GetBot("porter");
-        this.fetchChannels = [Main.Config.channels.bot];
+        // this.fetchChannels = [Main.Config.channels.bot];
         let data = {"requiredRole": Main.Config.roles.adminHelpRole};
-        this.RegisterCommand("shutdown", this.onShutdown, data);
-        this.RegisterCommand("message", this.onMessage, data);
-        this.RegisterCommand("editmessage", this.onEditMessage, data);
-        this.RegisterCommand("messagenorole", this.onMessageNoRole, data);
-        this.RegisterCommand("version", this.onVersion);
-        this.RegisterCommand("changename", this.onChangeName, data);
-        this.RegisterCommand("clearchannel", this.onClearChannel, data);
-        this.RegisterCommand("hwinfo", this.onHwInfo, data);
+        this.RegisterLegacyCommand("shutdown", this.onShutdown, data);
+        // this.RegisterLegacyCommand("message", this.onMessage, data);
+        // this.RegisterLegacyCommand("editmessage", this.onEditMessage, data);
+        // this.RegisterLegacyCommand("messagenorole", this.onMessageNoRole, data);
+        this.RegisterLegacyCommand("version", this.onVersion);
+        this.RegisterLegacyCommand("changename", this.onChangeName, data);
+        // this.RegisterLegacyCommand("clearchannel", this.onClearChannel, data);
+        this.RegisterLegacyCommand("hwinfo", this.onHwInfo, data);
 
         this.RegisterCron("0 0 12 * * *", () => {
             this.sendNoRoleMessage(Main.Messages.noRoleDmMessage);
         });
     }
 
-    onShutdown(msg: Message, args: string[]) {
+    async onShutdown(msg: Message, args: string[]): Promise<void> {
         msg.channel.send(Main.Messages.shuttingDown).then(msg => {
             process.exit();
         });
-        return true;
+        // return true;
     }
 
     onEditMessage(msg: Message, args: string[]) {
@@ -49,11 +50,10 @@ export class AdminService extends Service {
         });
     }
 
-    onMessage(msg: Message, args: string[]) {
+    async onMessage(msg: Message, args: string[]): Promise<void> {
         // let string = msg.content.substring(9);
         let string = args.join(" ");
         msg.channel.send(string);
-        return true;
     }
 
     onMessageNoRole(msg: Message, args: string[]) {
@@ -83,7 +83,7 @@ export class AdminService extends Service {
             .send(Formatter.Format(Main.Messages.verificationDmMessage, [members.length.toString()]));
     }
 
-    onVersion(msg: Message, args: string[]) {
+    async onVersion(msg: Message, args: string[]): Promise<void> {
         msg.channel.send(Formatter.Format(Main.Messages.currentVersion, [Main.Package.version, Main.Package.lastupdate]))
             .catch(() => {
             });
@@ -97,7 +97,7 @@ export class AdminService extends Service {
             let nick = args.slice(1).join(" ");
             let member = undefined;
             if (msg.mentions.members.size === 1) {
-                member = msg.mentions.members.array()[0];
+                member = msg.mentions.members[0];
             } else {
                 member = await Messenger.GetMemberById(args[0]);
             }
@@ -124,13 +124,13 @@ export class AdminService extends Service {
                 (msg.channel as TextChannel).bulkDelete(rem).then(messages => {
                     Logger.Info("Deleted " + rem + " messages from channel " + (msg.channel as TextChannel).name + ".");
                 }).catch(() => {
-                    Logger.Error("Failed to delete " + rem + " messages from channel " + (msg.channel as TextChannel).name + ".");
+                    BotLogger.Warn("Failed to delete " + rem + " messages from channel " + (msg.channel as TextChannel).name + ".").finally();
                 });
             }, i * timeBetweenCycles);
         }
     }
 
-    onHwInfo(msg: Message, args: string[]) {
+    async onHwInfo(msg: Message, args: string[]): Promise<void> {
         let cpuInfo;
         let memInfo;
 
@@ -163,7 +163,7 @@ export class AdminService extends Service {
                     })
                 .setTimestamp();
             this.Enforce();
-            msg.channel.send(embed);
+            msg.channel.send({embeds: [embed]});
         });
     }
 }

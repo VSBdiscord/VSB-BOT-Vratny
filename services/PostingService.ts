@@ -12,10 +12,10 @@ import * as axios from "axios";
 import {TextChannel} from "discord.js";
 
 export class PostingService extends Service {
-    url:string;
-    articlePrefixUrl:string;
-    lastId:number;
-    channel:TextChannel;
+    url: string;
+    articlePrefixUrl: string;
+    lastId: number;
+    channel: TextChannel;
 
     constructor() {
         super();
@@ -23,7 +23,7 @@ export class PostingService extends Service {
         this.url = "https://www.vsb.cz/cs/o-univerzite/novinky/aktuality";
         this.articlePrefixUrl = "https://www.vsb.cz";
         this.lastId = 0;
-        // this.RegisterCommand("news", (msg, args) => {this.fetchNews();});
+        // this.RegisterLegacyCommand("news", (msg, args) => {this.fetchNews();});
         // this.RegisterCron('0 0 * * * *', () => {this.fetchNews();});
         this.channel = null;
     }
@@ -31,7 +31,7 @@ export class PostingService extends Service {
     async OnStart() {
         Channels.FetchChannel(Main.Config.channels.vsbNews).then(channel => {
             this.channel = channel as TextChannel;
-            this.channel.messages.fetch({limit: 1}, true).then(msgs => {
+            this.channel.messages.fetch({limit: 1}, {cache: true}).then(msgs => {
                 if (msgs.size !== 1) return;
                 let msg = msgs.first();
                 let url = msg.content.substr(msg.content.indexOf("https://"));

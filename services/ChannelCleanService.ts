@@ -9,6 +9,7 @@ import * as Main from "../main";
 export class ChannelCleanService extends Service {
     constructor() {
         super();
+        console.log("???");
         this.bot = Main.GetBot("porter");
         this.allowedChannels = [Main.Config.channels.giveaway];
         this.listenToBots = true;
