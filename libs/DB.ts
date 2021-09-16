@@ -7,8 +7,9 @@
 import * as Main from "../main";
 import * as MySQL from "mysql";
 import * as Logger from "./Logger";
+import {BotLogger} from "./BotLogger";
 
-let connection:MySQL.Connection = null;
+let connection: MySQL.Connection = null;
 
 function setupConnection() {
     if (connection === null) connection = MySQL.createConnection({
@@ -21,8 +22,11 @@ function setupConnection() {
         charset: "utf8mb4"
     });
 
+    connection.on("error", err => {
+        BotLogger.Error(err).finally();
+    })
     connection.connect(err => {
-        if (err) Logger.Error(err.message);
+        if (err) BotLogger.Error(err).finally();
     });
 }
 
@@ -32,7 +36,6 @@ let closeTimeout: NodeJS.Timeout = null;
 /**
  * Prepares db server.
  * @param callback
- * @constructor
  */
 export function Prepare(callback: () => void) {
     setupConnection();
@@ -60,7 +63,6 @@ export function Select(query: string, params: string[]): Promise<any> {
         let func = () => {
             connection.query(query, params, (error, results, fields) => {
                 if (error) {
-                    Logger.Error(error.message);
                     reject(error);
                     return;
                 }
@@ -82,10 +84,10 @@ export function Select(query: string, params: string[]): Promise<any> {
  * @param params
  * @constructor
  */
-export function Run(query: string, params: any[]) {
+export function Run(query: string, params: any[]): void {
     let func = () => {
         connection.query(query, params, (error) => {
-            if (error) Logger.Error(error.message);
+            if (error) BotLogger.Error(error).finally();
         });
     };
 

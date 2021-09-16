@@ -4,14 +4,14 @@
  * Time: 20:11
  */
 
-let prefixSpace:number = 20;
+let prefixSpace: number = 20;
 
-function prefix(tag:string) {
-    let date:Date = new Date();
-    let minutes:number = date.getMinutes();
-    let seconds:number = date.getSeconds();
-    let minutesStr:string=minutes.toString();
-    let secondsStr:string=seconds.toString();
+function prefix(tag: string) {
+    let date: Date = new Date();
+    let minutes: number = date.getMinutes();
+    let seconds: number = date.getSeconds();
+    let minutesStr: string = minutes.toString();
+    let secondsStr: string = seconds.toString();
     if (minutes < 10) minutesStr = "0" + minutesStr;
     if (seconds < 10) secondsStr = "0" + secondsStr;
     let string = date.getHours().toString() + ":" + minutesStr + ":" + secondsStr;
@@ -25,7 +25,7 @@ function prefix(tag:string) {
  * Sends INFO log.
  * @param message
  */
-export function Info(message:string) {
+export function Info(message: string) {
     console.log(prefix("INFO") + message);
 }
 
@@ -33,6 +33,10 @@ export function Info(message:string) {
  * Sends ERROR log.
  * @param message
  */
-export function Error(message:string) {
+export function Error(message: string) {
     console.error(prefix("ERROR") + message);
+}
+
+export function Obj(obj: any) {
+    console.log(prefix("OBJ") + obj);
 }

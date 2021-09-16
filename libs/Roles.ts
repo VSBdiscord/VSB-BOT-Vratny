@@ -13,7 +13,7 @@ import {GuildMember, Role} from "discord.js";
  * @param id
  * @constructor
  */
-export function HasRole(member:GuildMember, id:string):boolean {
+export function HasRole(member: GuildMember, id: string): boolean {
     if (member == null) return false;
     return member.roles.cache.find(role => role.id == id) != null;
 }
@@ -24,8 +24,8 @@ export function HasRole(member:GuildMember, id:string):boolean {
  * @param id
  * @constructor
  */
-export function AddRole(member:GuildMember, id:string):Promise<GuildMember> {
-    return member.roles.add(this.GetRole(id));
+export async function AddRole(member: GuildMember, id: string): Promise<GuildMember> {
+    return member.roles.add(await GetRole(id));
 }
 
 /**
@@ -33,8 +33,12 @@ export function AddRole(member:GuildMember, id:string):Promise<GuildMember> {
  * @param id
  * @constructor
  */
-export function GetRole(id:string):Role {
-    return Main.GetCurrentBot().guild.roles.cache.find(role => role.id === id);
+export async function GetRole(id: string): Promise<Role | null> {
+    let role: Role | undefined = Main.GetCurrentBot().guild.roles.cache.find(role => role.id === id);
+    if (role !== undefined) {
+        return role;
+    }
+    return await Main.GetCurrentBot().guild.roles.fetch(id, {cache: true});
 }
 
 /**
@@ -43,6 +47,6 @@ export function GetRole(id:string):Role {
  * @param id
  * @constructor
  */
-export function RemoveRole(member:GuildMember, id:string):Promise<GuildMember> {
-    return member.roles.remove(this.GetRole(id));
+export async function RemoveRole(member: GuildMember, id: string): Promise<GuildMember> {
+    return member.roles.remove(await GetRole(id));
 }

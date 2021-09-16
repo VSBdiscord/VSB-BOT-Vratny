@@ -32,10 +32,14 @@ import {PollService} from "./services/PollService";
 import {StudentInfoScraperService} from "./services/StudentInfoScraperService";
 import {CheckerLogService} from "./services/CheckerLogService";
 import {DatabaseManagerService} from "./services/DatabaseManagerService";
+import {MasterServerSocketService} from "./services/MasterServerSocketService";
+import {MessageManagerService} from "./services/MessageManagerService";
 
 // const WebService = require("./services/WebService");
 //const PinService = require("./services/PinService");
 //const PermissionService = require("./services/PermissionService");
+
+export let DEBUG: boolean = false;
 
 let bots: Bot[] = [];
 let currentBot: Bot = null;
@@ -45,14 +49,27 @@ let currentBot: Bot = null;
  * @param {string} name
  * @return {Bot}
  */
-export function GetBot(name: string) {
+export function GetBot(name: string): Bot {
     for (let i = 0; i < bots.length; ++i) {
         if (bots[i].name === name) return bots[i];
     }
     return null;
 }
 
-export function SetCurrentBot(client: Client) {
+export function WaitForBot(name: string): Promise<Bot> {
+    return new Promise<Bot>((resolve, reject) => {
+        let bot: Bot = GetBot(name);
+        if (bot.client.user === null) {
+            bot.client.on("ready", () => {
+                resolve(bot);
+            });
+            return;
+        }
+        resolve(bot);
+    });
+}
+
+export function SetCurrentBot(client: Client): void {
     for (let i = 0; i < bots.length; ++i) {
         if (bots[i].client === undefined)
             continue;
@@ -67,7 +84,7 @@ export function SetCurrentBot(client: Client) {
  * Returns current executing bot.
  * @return {Bot}
  */
-export function GetCurrentBot() {
+export function GetCurrentBot(): Bot {
     return currentBot;
 }
 
@@ -84,6 +101,7 @@ export function IsBotId(id: string) {
 }
 
 let start = () => {
+    DEBUG = Config.debug;
     let keys = Object.keys(Auth.bots);
     for (let i = 0; i < keys.length; ++i) {
         Logger.Info(`Registering bot ${keys[i]}.`);
@@ -94,8 +112,8 @@ let start = () => {
     Services.AddService(new VerificationService());
     // Services.AddService(new StudentCheckService());
     Services.AddService(new AdminService());
-    Services.AddService(new ChannelCleanService());
-    Services.AddService(new PostingService());
+    // Services.AddService(new ChannelCleanService());
+    // Services.AddService(new PostingService());
     Services.AddService(new PollService());
     // Services.AddService(new StudentInfoScraperService());
     // Services.AddService(new WebService());
@@ -103,7 +121,11 @@ let start = () => {
     //Services.AddService(new PinService());
     //Services.AddService(new PermissionService());
     Services.AddService(new DatabaseManagerService());
-    Logger.Info("Ready. Version: " + Package.version);
+    Services.AddService(new MasterServerSocketService());
+    Services.AddService(new MessageManagerService());
+    Services.OnStart(null).then(() => {
+        Logger.Info(`Ready. Version: ${Package.version} ${DEBUG ? "[DEBUG]" : ""}`);
+    });
 };
 
 start();

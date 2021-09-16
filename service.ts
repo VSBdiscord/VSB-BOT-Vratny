@@ -6,26 +6,37 @@
 
 import * as Main from "./main";
 import {Bot} from "./bot";
-import {GuildMember, Message, MessageReaction} from "discord.js";
+import {CommandInteraction, GuildMember, Interaction, Message, MessageButton, MessageReaction} from "discord.js";
 import {Cron} from "./cron";
 import * as Channels from "./libs/Channels";
+import * as Logger from "./libs/Logger";
+import {ButtonInteractionWrap} from "./types/ButtonInteractionWrap";
+import {SlashCommandBuilder} from "@discordjs/builders";
+import {SharedSlashCommandOptions} from "@discordjs/builders/dist/interactions/slashCommands/mixins/CommandOptions";
+import {CommandBehaviorCallback, SlashCommandWrap} from "./types/SlashCommandWrap";
+import {ServiceGlobalData} from "./types/ServiceGlobalData";
+import {ButtonBehaviorCallback} from "./types/ButtonBehaviorHandler";
 
 export class Service {
-    bot: Bot;
-    forbiddenRoles: string[];
-    allowedChannels: string[];
-    fetchChannels: string[];
-    commands: { [name: string]: { [key: string]: any } };
-    crons: Cron[];
-    listenToBots: boolean;
-    currentCommand: string;
+    public static readonly globalData: ServiceGlobalData = new ServiceGlobalData();
+
+    public bot: Bot;
+    public forbiddenRoles: string[];
+    public allowedChannels: string[];
+    public fetchChannels: string[];
+    public legacyCommands: { [name: string]: { [key: string]: any } };
+    public commands: SlashCommandWrap[];
+    public crons: Cron[];
+    public listenToBots: boolean;
+    public currentCommand: string;
 
     constructor() {
         this.bot = null;
         this.forbiddenRoles = [];
         this.allowedChannels = null;
         this.fetchChannels = null;
-        this.commands = {};
+        this.legacyCommands = {};
+        this.commands = [];
         this.crons = [];
         this.listenToBots = false;
 
@@ -37,22 +48,49 @@ export class Service {
      * @param cmd
      * @param callback
      * @param data
+     * @deprecated Will be deleted in future version. Use RegisterSlashCommand instead.
      */
-    protected RegisterCommand(cmd: string, callback: (cmd: Message, args: string[]) => void, data: { [key: string]: any } = {}): void {
+    protected RegisterLegacyCommand(cmd: string, callback: (cmd: Message, args: string[]) => Promise<void>, data: { [key: string]: any } = {}): void {
         let keys: string[] = [];
-        if (data != null)
+        if (data != null) {
             keys = Object.keys(data);
+        }
         data = {
             "requiredRole": keys.indexOf("requiredRole") !== -1 ? data["requiredRole"] : null,
             "allowedChannels": keys.indexOf("allowedChannels") !== -1 ? data["allowedChannels"] : null,
             "forbiddenRoles": keys.indexOf("forbiddenRoles") !== -1 ? data["forbiddenRoles"] : []
         };
-        this.commands[cmd.toLowerCase()] = {
+        this.legacyCommands[cmd.toLowerCase()] = {
             "callback": callback,
             "requiredRole": data["requiredRole"],
             "allowedChannels": data["allowedChannels"],
             "forbiddenRoles": data["forbiddenRoles"]
         };
+        let infoTags: string = "";
+        for (let key of keys) {
+            infoTags += (infoTags.length > 0 ? "," : "") + key;
+        }
+        Logger.Info(`Legacy Command ${cmd} registered. [${infoTags}]`);
+
+    }
+
+    /**
+     *
+     * @param builder
+     * @param callback
+     * @param roles
+     */
+    protected RegisterSlashCommand(
+        builder: SlashCommandBuilder | Omit<SharedSlashCommandOptions, "addSubcommand" | "addSubcommandGroup">,
+        callback: CommandBehaviorCallback,
+        roles: string[] | null = null
+    ) {
+        let instance: SlashCommandBuilder = builder as SlashCommandBuilder;
+        if (roles !== []) {
+            instance.setDefaultPermission(false);
+        }
+        this.commands.push(new SlashCommandWrap(instance, callback, roles));
+        Logger.Info(`Slash Command ${instance.name} registered.`);
     }
 
     /**
@@ -63,7 +101,20 @@ export class Service {
     protected RegisterCron(cronString: string, callback: () => void): Cron {
         let cron = new Cron(cronString, callback);
         this.crons.push(cron);
+        Logger.Info(`Cron "${cronString}" registered.`);
         return cron;
+    }
+
+    /**
+     * Defines custom message button behavior.
+     * This behavior can be later used while attaching a new button onto message.
+     *
+     * @param uniqueKey Behavior's unique key
+     * @param callback Callback for button click
+     */
+    protected DefineButtonBehavior(uniqueKey: string, callback: ButtonBehaviorCallback): void {
+        Service.globalData.AddButtonBehavior(this, uniqueKey, callback);
+        Logger.Info(`Button behavior ${uniqueKey} registered.`);
     }
 
     protected Enforce(): void {
@@ -121,5 +172,27 @@ export class Service {
      * @param member
      */
     public async OnReactionRemove(reaction: MessageReaction, member: GuildMember) {
+    }
+
+    public async OnButtonInteraction(buttonInteraction: ButtonInteractionWrap): Promise<void> {
+    }
+}
+
+export class NonBotService extends Service {
+    constructor() {
+        super();
+        this.bot = null;
+    }
+
+    protected RegisterLegacyCommand(cmd: string, callback: (cmd: Message, args: string[]) => void, data: { [p: string]: any } = {}) {
+        return;
+    }
+
+    protected Enforce() {
+        return;
+    }
+
+    async OnStart(): Promise<void> {
+        return;
     }
 }

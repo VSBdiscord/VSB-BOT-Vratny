@@ -12,21 +12,59 @@ import * as Mail from "../libs/Mail";
 import * as Formatter from "../libs/Formatter";
 import * as Files from "../libs/Files";
 import * as Channels from "../libs/Channels";
+import {ButtonInteractionWrap} from "../types/ButtonInteractionWrap";
 
 export class VerificationService extends Service {
+    private readonly ssoAddress: string;
+
     constructor() {
         super();
         this.bot = Main.GetBot("porter");
         this.allowedChannels = [Main.Config.channels.welcome];
+        this.ssoAddress = Main.Auth.sso.url;
+
         let data = {"forbiddenRoles": [Main.Config.roles.hostRole, Main.Config.roles.studentRole, ...Main.Config.roles.otherRoles]};
-        this.RegisterCommand("student", this.onStudent, data);
-        this.RegisterCommand("erasmus", this.onStudent, data);
-        this.RegisterCommand("teacher", this.onTeacher, data);
-        this.RegisterCommand("doctorate", this.onTeacher, data);
-        this.RegisterCommand("help", this.onHelp, data);
-        this.RegisterCommand("verify", this.onVerify, data);
-        this.RegisterCommand("host", this.onHost, data);
-        this.RegisterCommand("absolvent", this.onAbsolvent, data);
+        // this.RegisterLegacyCommand("student", this.onStudent, data);
+        // this.RegisterLegacyCommand("erasmus", this.onStudent, data);
+        // this.RegisterLegacyCommand("teacher", this.onTeacher, data);
+        // this.RegisterLegacyCommand("doctorate", this.onTeacher, data);
+        // this.RegisterLegacyCommand("help", this.onHelp, data);
+        // this.RegisterLegacyCommand("verify", this.onVerify, data);
+        // this.RegisterLegacyCommand("host", this.onHost, data);
+        // this.RegisterLegacyCommand("absolvent", this.onAbsolvent, data);
+
+        this.DefineButtonBehavior("special.sso", this.behaviorSpecialSso);
+    }
+
+    public async VerifyStudent(userId: string, email: string, login: string, firstName: string, lastName: string): Promise<void> {
+        let rows: any[] = await Main.Database.Select(Main.Config.database.queries.select.userById, [userId]);
+        if (rows.length === 1) {
+            Main.Database.Run(Main.Config.database.queries.update.userInfoById, [
+                login,
+                1,
+                `${firstName} ${lastName} (${email})`,
+                userId
+            ]);
+        } else {
+            Main.Database.Run(Main.Config.database.queries.insert.userFull, [
+                userId,
+                login,
+                1,
+                0,
+                this.generateVerificationString(),
+                `${firstName} ${lastName} (${email})`
+            ]);
+        }
+
+        await Roles.AddRole(await Messenger.GetMemberById(userId), Main.Config.roles.studentRole);
+    }
+
+    private async behaviorSpecialSso(interaction: ButtonInteractionWrap, args: string[]): Promise<void> {
+        let address: string = this.ssoAddress;
+        await interaction.interaction.reply({
+            content: `**Tvůj SSO odkaz: **${address + "/?_=" + interaction.caller.id}\n\nPo úspěšném přihlášení bys měl získat příslušnou roli během chvile.\nPokud se tak nestane, prosím kontaktuj administrátory, kteří ti pomohou vyřešit tento problém.`,
+            ephemeral: true
+        });
     }
 
     generateVerificationString() {
@@ -39,7 +77,7 @@ export class VerificationService extends Service {
         return string;
     }
 
-    onStudent(msg: Message, args: string[]) {
+    async onStudent(msg: Message, args: string[]): Promise<boolean> {
         if (!this.checkArgument(msg, args)) return true;
         let name = args[0].toLowerCase();
         let isErasmus = this.currentCommand !== "student";

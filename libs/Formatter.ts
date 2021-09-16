@@ -10,13 +10,13 @@
  * @param args
  * @return Formatted string
  */
-export function Format(string:string, args:string[]) {
+export function Format(string: string, args: string[]): string {
     return Format2(string, ["{", "}"], args);
 }
 
-export function Format2(string:string, splitters:string[], args:string[]) {
-    let idx0:number;
-    let idx1:number;
+export function Format2(string: string, splitters: string[], args: string[]): string {
+    let idx0: number;
+    let idx1: number;
     while ((idx0 = string.indexOf(splitters[0])) >= 0 && (idx1 = string.indexOf(splitters[1])) >= 0 && idx1 > idx0) {
         let arg = string.substring(idx0 + splitters[0].length, idx1);
         let num = parseInt(arg);
@@ -25,4 +25,16 @@ export function Format2(string:string, splitters:string[], args:string[]) {
         }
     }
     return string;
+}
+
+/**
+ *
+ * @param string
+ */
+export function Simplify(string: string): string {
+    return string.toLowerCase().trim()
+        .replace(" ", "")
+        .replace("<", "")
+        .replace(">", "")
+        .replace(":", "");
 }

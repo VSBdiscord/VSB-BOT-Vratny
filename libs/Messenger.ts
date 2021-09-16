@@ -5,7 +5,8 @@
  */
 
 import * as Main from "../main";
-import {GuildChannel, GuildMember, Message, Role, TextChannel} from "discord.js";
+import {GuildChannel, GuildMember, Message, Role, TextChannel, ThreadChannel} from "discord.js";
+import {mem} from "systeminformation";
 
 /**
  *
@@ -15,7 +16,7 @@ import {GuildChannel, GuildMember, Message, Role, TextChannel} from "discord.js"
  */
 export function DeleteAfter(message: Message, seconds: number) {
     setTimeout(() => {
-        message.delete();
+        message.delete().finally();
     }, seconds * 1000);
 }
 
@@ -24,25 +25,36 @@ export function DeleteAfter(message: Message, seconds: number) {
  * @param member
  * @constructor
  */
-export function GetName(member:GuildMember):string {
+export function GetName(member: GuildMember): string {
     return member.nickname !== null && member.nickname !== undefined ? member.nickname : member.user.username;
 }
 
 /**
  *
  * @param member
- * @constructor
  */
-export function GetMemberRoles(member:GuildMember):Role[] {
-    return member.roles.cache.filter(role => role.name !== "@everyone").array();
+export function GetDetailedName(member: GuildMember): string {
+    if (member.nickname !== null && member.nickname !== undefined) {
+        return `${member.nickname} (${member.user.tag})`;
+    }
+    return `${member.user.tag}`;
 }
 
 /**
  *
- * @constructor
+ * @param member
  */
-export function GetMembersWithoutRole():GuildMember[] {
-    return Main.GetCurrentBot().guild.members.cache.filter(member => GetMemberRoles(member).length === 0).array();
+export function GetMemberRoles(member: GuildMember): Role[] {
+    // Probably not working?
+    return Array.from(member.roles.cache.filter(role => role.name !== "@everyone").values());
+}
+
+/**
+ *
+ */
+export function GetMembersWithoutRole(): GuildMember[] {
+    // Probably not working?
+    return Array.from(Main.GetCurrentBot().guild.members.cache.filter(member => GetMemberRoles(member).length === 0).values());
 }
 
 /**
@@ -50,11 +62,11 @@ export function GetMembersWithoutRole():GuildMember[] {
  * @param id
  * @constructor
  */
-export function GetMemberById(id:string):Promise<GuildMember> {
+export function GetMemberById(id: string): Promise<GuildMember> {
     // return Main.GetCurrentBot().guild.members.fetch(id).then(member => {
     //     return member;
     // });
-    return Main.GetCurrentBot().guild.members.fetch(id);
+    return Main.GetCurrentBot().guild.members.fetch({user: id, cache: true});
 }
 
 /**
@@ -63,23 +75,28 @@ export function GetMemberById(id:string):Promise<GuildMember> {
  * @param messageId
  * @constructor
  */
-export function GetMessageById(channelId:string, messageId:string):Promise<Message> {
-    let channel:GuildChannel = Main.GetCurrentBot().guild.channels.cache.find((channel:GuildChannel) => channel.id === channelId);
-    if (channel == null) {
+export function GetMessageById(channelId: string, messageId: string): Promise<Message> {
+    let channel: TextChannel = Main.GetCurrentBot().guild.channels.cache.find((channel) => channel.id === channelId) as TextChannel;
+    if (channel === null) {
         return new Promise(((resolve, reject) => {
-            Main.GetCurrentBot().client.channels.fetch(channelId).then((channel:TextChannel) => {
-                channel.messages.fetch(messageId, true).then((msg:Message) => {
+            Main.GetCurrentBot().client.channels.fetch(channelId).then((channel: TextChannel) => {
+                channel.messages.fetch(messageId, {cache: true}).then((msg: Message) => {
                     resolve(msg);
-                }).catch(() => {reject();});
-            }).catch(() => {reject();});
+                }).catch(() => {
+                    reject();
+                });
+            }).catch(() => {
+                reject();
+            });
         }));
     } else {
-        return (Main.GetCurrentBot()
-            .guild
-            .channels
-            .cache
-            .find((channel:GuildChannel) => channel.id == channelId) as TextChannel)
-            .messages
-            .fetch(messageId, true);
+        return (
+            Main.GetCurrentBot()
+                .guild
+                .channels
+                .cache
+                .find((channel) => channel.id == channelId) as TextChannel
+        ).messages
+            .fetch(messageId, {cache: true});
     }
 }
