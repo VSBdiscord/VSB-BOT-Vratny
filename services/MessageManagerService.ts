@@ -303,7 +303,7 @@ export class MessageManagerService extends Service {
                 json
             ]
         }).catch(reason => {
-            BotLogger.Warn(reason);
+            BotLogger.Warn(reason.message);
         });
         await interaction.reply({
             content: "OK!",
