@@ -19,6 +19,7 @@ import {
 import {REST} from "@discordjs/rest";
 import {APIApplicationCommand, Routes} from "discord-api-types/v9";
 import {SlashCommandWrap} from "./types/SlashCommandWrap";
+import {BotLogger} from "./libs/BotLogger";
 
 export class Bot {
     name: string;
@@ -114,6 +115,9 @@ export class Bot {
             } else if (interaction.isCommand()) {
                 Services.OnCommandInteraction(interaction).finally();
             }
+        });
+        this.client.on("error", async args => {
+            await BotLogger.Error(args, "CRITICAL ERROR ON TOP HANDLER:");
         });
 
         this.client.login(token).finally();

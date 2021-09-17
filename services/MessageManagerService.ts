@@ -302,6 +302,8 @@ export class MessageManagerService extends Service {
             embeds: [
                 json
             ]
+        }).catch(reason => {
+            BotLogger.Warn(reason);
         });
         await interaction.reply({
             content: "OK!",
