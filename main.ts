@@ -101,7 +101,9 @@ export function IsBotId(id: string) {
 }
 
 let start = () => {
-    DEBUG = Config.debug;
+    DEBUG = false;
+    if (process.argv.length >= 3 && process.argv[2] === "--debug")
+        DEBUG = true;
     let keys = Object.keys(Auth.bots);
     for (let i = 0; i < keys.length; ++i) {
         Logger.Info(`Registering bot ${keys[i]}.`);

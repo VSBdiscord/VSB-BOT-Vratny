@@ -1,5 +1,4 @@
 {
-  "debug": false,
   "testers": [
     "141283180341755904",
     "721660616531771393",
@@ -65,9 +64,16 @@
   "services": {
     "ChannelCleanService": {
       "deleteAfter": 120
+    },
+    "VerificationService": {
+      "teacherUrlPrefix": "https://www.vsb.cz/personCards/personCard.jsp?lang=cs&person="
     }
   },
   "assets": {
     "verificationMail": "./assets/verificationMail.html"
+  },
+  "apps": {
+    "studentVerification": 0,
+    "studentScrapper": 1
   }
 }

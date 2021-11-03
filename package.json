@@ -1,7 +1,7 @@
 {
   "name": "vsbbot",
-  "version": "1.1.8",
-  "lastupdate": "11/9/2021",
+  "version": "1.1.9",
+  "lastupdate": "2/11/2021",
   "description": "VŠB-TUO FEI Discord Community BOT",
   "main": "_JS/main.js",
   "scripts": {
