@@ -73,16 +73,17 @@ export class Bot {
                         if (serviceCommand.roles === null || serviceCommand.builder.name !== command.name) {
                             continue;
                         }
-                        const permission: ApplicationCommandPermissionData[] = [];
-                        for (let role of serviceCommand.roles) {
-                            permission.push({
-                                id: role,
-                                type: "ROLE",
-                                permission: true
-                            });
-                        }
-                        let applicationCommand: ApplicationCommand = await this.client.guilds.cache.first().commands.fetch(command.id, {cache: true});
-                        await applicationCommand.permissions.add({permissions: permission});
+                        // TODO: Permissions are now unsupported by discord due to security.
+                        // const permission: ApplicationCommandPermissionData[] = [];
+                        // for (let role of serviceCommand.roles) {
+                        //     permission.push({
+                        //         id: role,
+                        //         type: "ROLE",
+                        //         permission: true
+                        //     });
+                        // }
+                        // let applicationCommand: ApplicationCommand = await this.client.guilds.cache.first().commands.fetch(command.id, {cache: true});
+                        // await applicationCommand.permissions.add(/*{permissions: permission}*/);
                     }
                 }
             });

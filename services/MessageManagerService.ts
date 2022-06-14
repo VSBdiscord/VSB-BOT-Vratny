@@ -23,7 +23,6 @@ import {SlashCommandBuilder} from "@discordjs/builders";
 import {ButtonBehaviorHandler} from "../types/ButtonBehaviorHandler";
 import {StringUtils} from "../libs/StringUtils";
 import {BotLogger} from "../libs/BotLogger";
-import {SharedSlashCommandOptions} from "@discordjs/builders/dist/interactions/slashCommands/mixins/CommandOptions";
 
 export class MessageManagerService extends Service {
     constructor() {
@@ -64,11 +63,22 @@ export class MessageManagerService extends Service {
                 .addStringOption(option => option.setName("style")
                     .setDescription("Button style")
                     .setRequired(false)
-                    .addChoice("PRIMARY", "PRIMARY")
-                    .addChoice("SECONDARY", "SECONDARY")
-                    .addChoice("SUCCESS", "SUCCESS")
-                    .addChoice("DANGER", "DANGER")
-                    .addChoice("LINK", "LINK"))
+                    .addChoices({
+                        name: "PRIMARY",
+                        value: "PRIMARY"
+                    }, {
+                        name: "SECONDARY",
+                        value: "SECONDARY"
+                    }, {
+                        name: "SUCCESS",
+                        value: "SUCCESS"
+                    }, {
+                        name: "DANGER",
+                        value: "DANGER"
+                    }, {
+                        name: "LINK",
+                        value: "LINK"
+                    }))
                 .addIntegerOption(option => option.setName("row")
                     .setDescription("Component row")
                     .setRequired(false))

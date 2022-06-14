@@ -53,14 +53,14 @@ export function IsPermitted(obj: object, service: Service): boolean {
         (obj != null && obj instanceof Base && typeof obj.client === undefined && obj.client.user.id !== Main.GetCurrentBot().client.user.id))
         return false;
     if (obj instanceof Message) {
-        if ((Main.Config.debug && Main.Config.testers.indexOf(obj.author.id) === -1) || (obj.author.bot && !service.listenToBots) || (service.allowedChannels !== null && service.allowedChannels.indexOf(obj.channel.id) === -1))
+        if ((Main.DEBUG && Main.Config.testers.indexOf(obj.author.id) === -1) || (obj.author.bot && !service.listenToBots) || (service.allowedChannels !== null && service.allowedChannels.indexOf(obj.channel.id) === -1))
             return false;
         for (let i = 0; i < service.forbiddenRoles.length; ++i) {
             if (Roles.HasRole(obj.member, service.forbiddenRoles[i])) return false;
         }
         return true;
     } else if (obj instanceof GuildMember) {
-        return (!Main.Config.debug || Main.Config.testers.indexOf(obj.id) > -1) && !(obj.user.bot && !service.listenToBots);
+        return (!Main.DEBUG || Main.Config.testers.indexOf(obj.id) > -1) && !(obj.user.bot && !service.listenToBots);
     } else if (obj === null) {
         return true;
     }

@@ -6,13 +6,12 @@
 
 import * as Main from "./main";
 import {Bot} from "./bot";
-import {CommandInteraction, GuildMember, Interaction, Message, MessageButton, MessageReaction} from "discord.js";
+import {GuildMember, Message, MessageReaction} from "discord.js";
 import {Cron} from "./cron";
 import * as Channels from "./libs/Channels";
 import * as Logger from "./libs/Logger";
 import {ButtonInteractionWrap} from "./types/ButtonInteractionWrap";
-import {SlashCommandBuilder} from "@discordjs/builders";
-import {SharedSlashCommandOptions} from "@discordjs/builders/dist/interactions/slashCommands/mixins/CommandOptions";
+import {SharedSlashCommandOptions, SlashCommandBuilder} from "@discordjs/builders";
 import {CommandBehaviorCallback, SlashCommandWrap} from "./types/SlashCommandWrap";
 import {ServiceGlobalData} from "./types/ServiceGlobalData";
 import {ButtonBehaviorCallback} from "./types/ButtonBehaviorHandler";
@@ -87,7 +86,7 @@ export class Service {
     ) {
         let instance: SlashCommandBuilder = builder as SlashCommandBuilder;
         if (roles !== []) {
-            instance.setDefaultPermission(false);
+            // instance.setDefaultPermission(false);
         }
         this.commands.push(new SlashCommandWrap(instance, callback, roles));
         Logger.Info(`Slash Command ${instance.name} registered.`);

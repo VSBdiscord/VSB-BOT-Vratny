@@ -5,7 +5,7 @@
  */
 
 import * as Main from "../main";
-import {Channel, TextChannel} from "discord.js";
+import {AnyChannel, Channel, TextChannel} from "discord.js";
 
 let fetchedChannels: string[] = [];
 
@@ -23,7 +23,7 @@ export function GetChannel(id: string): TextChannel {
  * @param id
  * @return channel promise
  */
-export async function FetchChannel(id: string): Promise<Channel> {
+export async function FetchChannel(id: string): Promise<AnyChannel> {
     if (fetchedChannels.indexOf(id) != -1) return new Promise((res, err) => {
         res(GetChannel(id));
     });
